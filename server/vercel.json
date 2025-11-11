@@ -4,12 +4,24 @@
     {
       "src": "src/server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
-    { 
-      "src": "/(.*)", 
-      "dest": "src/server.js" 
+    {
+      "src": "/api/webhook",
+      "dest": "api/webhook.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/server.js"
     }
   ]
 }

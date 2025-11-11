@@ -13,6 +13,8 @@ const app = express()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.use(cors({ origin: process.env.CLIENT_URL }))
+
+
 // ⚠️ Stripe webhook route phải dùng raw body
 
 // app.post('/api/webhook',express.raw({ type: 'application/json' }), async (req, res) => {
