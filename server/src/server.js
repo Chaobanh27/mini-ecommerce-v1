@@ -15,33 +15,33 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 app.use(cors({ origin: process.env.CLIENT_URL }))
 // ⚠️ Stripe webhook route phải dùng raw body
 
-app.post('/api/webhook',express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature']
-  let event
+// app.post('/api/webhook',express.raw({ type: 'application/json' }), async (req, res) => {
+//   const sig = req.headers['stripe-signature']
+//   let event
 
-  console.log('webhook is calling');
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
-  } catch (err) {
-    console.error('❌ Webhook signature error:', err.message)
-    return res.status(400).send(`Webhook Error: ${err.message}`)
-  }
+//   console.log('webhook is calling');
+//   try {
+//     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
+//   } catch (err) {
+//     console.error('❌ Webhook signature error:', err.message)
+//     return res.status(400).send(`Webhook Error: ${err.message}`)
+//   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object
+//   if (event.type === 'checkout.session.completed') {
+//     const session = event.data.object
 
-    await Order.create({
-      sessionId: session.id,
-      customerEmail: session.customer_details.email,
-      amount_total: session.amount_total,
-      payment_status: session.payment_status,
-    })
+//     await Order.create({
+//       sessionId: session.id,
+//       customerEmail: session.customer_details.email,
+//       amount_total: session.amount_total,
+//       payment_status: session.payment_status,
+//     })
 
-    console.log('✅ Order saved for session', session.id)
-  }
+//     console.log('✅ Order saved for session', session.id)
+//   }
 
-  res.status(200).send()
-})
+//   res.status(200).send()
+// })
 
 app.use(express.json())
 
