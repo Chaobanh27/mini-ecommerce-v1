@@ -5,9 +5,7 @@ import { Order } from '../models/Order.js'
 
 const router = express.Router()
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-11-08', // bạn có thể dùng version mới nhất
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // 🟢 Tạo session thanh toán
 router.post('/create-checkout-session', async (req, res) => {
@@ -30,7 +28,7 @@ router.post('/create-checkout-session', async (req, res) => {
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
     })
 
-    res.json({ id: session.id })
+    res.json({ id: session.id, url: session.url })
   } catch (error) {
     console.error('❌ Error creating session:', error.message)
     res.status(500).json({ error: error.message })
@@ -42,6 +40,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   const sig = req.headers['stripe-signature']
   let event
 
+  console.log('webhook is calling');
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (err) {
