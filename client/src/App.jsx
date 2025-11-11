@@ -1,4 +1,9 @@
+import { useEffect, useState } from "react";
+import Message from "./components/Message";
+
 function App() {
+  const [message, setMessage] = useState("");
+
   const handleCheckout = async () => {
     try {
       // Gọi backend để tạo Checkout Session
@@ -22,8 +27,23 @@ function App() {
       console.error("❌ Lỗi khi tạo checkout session:", err);
     }
   };
+  useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = new URLSearchParams(window.location.search);
 
-  return (
+    if (query.get("success")) {
+      setMessage("Order placed! You will receive an email confirmation.");
+    }
+
+    if (query.get("canceled")) {
+      setMessage(
+        "Order canceled -- continue to shop around and checkout when you're ready."
+      );
+    }
+  }, []);
+  return message ? (
+    <Message message={message}/>
+  ) : (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>T-Shirt - $20</h1>
       <button onClick={handleCheckout}>Thanh toán</button>
